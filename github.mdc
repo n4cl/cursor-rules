@@ -1,3 +1,8 @@
+---
+description: GitHubリポジトリのIssueとプルリクエスト作成に関する規則を定義
+globs:
+alwaysApply: false
+---
 ## Issue作成ルール（機能追加・改善提案）
 
 以下のテンプレートに沿ってIssueを作成してください。
