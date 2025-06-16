@@ -1,3 +1,8 @@
+---
+description: git のブランチ運用ルールを定義
+globs:
+alwaysApply: false
+---
 ## プロジェクト開発ルール (ブランチ運用)
 
 本プロジェクトでは、以下の3種類のブランチを利用し、Pull Request (PR) を介した統合を基本とします。
