@@ -1,0 +1,3 @@
+writing/markdown-style-guide.mdc
+writing/tech-blog.mdc
+communication/effective-communication-framework.mdc
