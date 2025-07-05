@@ -1,68 +1,69 @@
 #!/bin/bash
 set -e
 
-# --- Configuration ---
-# The base URL for raw file content on GitHub.
+# --- 設定 ---
+# GitHub上の生ファイルコンテンツのベースURL
 BASE_URL="https://raw.githubusercontent.com/n4cl/cursor-rules/main"
 PROFILE=$1
 
-# --- Main Logic ---
+# --- メイン処理 ---
 
-# Show usage if no profile is specified
+# プロファイルが指定されていない場合は使用法を表示
 if [ -z "$PROFILE" ]; then
-  echo "Usage: curl -sSL <script_url> | bash -s {profile_name|clear}"
-  echo "Available profiles: dev, blog"
+  echo "使用法: curl -sSL <スクリプトURL> | bash -s {プロファイル名|clear}"
+  echo "利用可能なプロファイル: dev, blog"
   exit 1
 fi
 
-# Create .cursor directory if it doesn't exist
+# .cursorディレクトリが存在しない場合は作成
 TARGET_DIR=".cursor"
 mkdir -p "$TARGET_DIR"
 
-# Handle the 'clear' command
+# 'clear'コマンドの処理
 if [ "$PROFILE" = "clear" ]; then
-  echo "Clearing existing rules from $TARGET_DIR/..."
-  # Remove only the .mdc files to avoid deleting other user files
+  echo "$TARGET_DIR/ から既存のルールをクリアしています..."
+  # 他のユーザーファイルを削除しないように、.mdcファイルのみを削除
   find "$TARGET_DIR" -maxdepth 1 -type f -name "*.mdc" -delete
-  echo "All rules cleared."
+  echo "すべてのルールがクリアされました。"
   exit 0
 fi
 
-# Define the URL for the profile definition file
+# プロファイル定義ファイルのURLを定義
 PROFILE_URL="$BASE_URL/profiles/${PROFILE}.txt"
 
-# Download the profile definition file
-echo "Fetching profile: $PROFILE from $PROFILE_URL"
-# Use curl with -f to fail silently on 404 errors, and capture the list
+# プロファイル定義ファイルをダウンロード
+echo "プロファイルを取得中: $PROFILE ($PROFILE_URL)"
+# curlを-fオプション付きで使用し、404エラー時にサイレントに失敗させ、リストをキャプチャ
 RULE_LIST=$(curl -fsSL "$PROFILE_URL")
 
 if [ -z "$RULE_LIST" ]; then
-  echo "Error: Profile '$PROFILE' not found or is empty."
-  echo "Please ensure the profile exists and is accessible at $PROFILE_URL"
+  echo "エラー: プロファイル '$PROFILE' が見つからないか、空です。"
+  echo "プロファイルが存在し、 $PROFILE_URL からアクセス可能であることを確認してください。"
   exit 1
 fi
 
-# First, clear any existing rules to ensure a clean state
-echo "Clearing existing rules..."
+# まず、クリーンな状態を確保するために既存のルールをクリア
+echo "既存のルールをクリアしています..."
 find "$TARGET_DIR" -maxdepth 1 -type f -name "*.mdc" -delete
 
-# Download each rule file specified in the profile
-echo "Setting up profile: $PROFILE"
+# プロファイルで指定された各ルールファイルをダウンロード
+echo "プロファイルを設定中: $PROFILE"
 
-# Use a while-read loop to handle the downloaded list
+# ダウンロードしたリストを処理するためのwhile-readループを使用
 while IFS= read -r rule_path; do
-  # Skip any empty lines
+  # 空行をスキップ
   if [ -z "$rule_path" ]; then
     continue
   fi
 
-  FILE_URL="$BASE_URL/$rule_path"
+  # ファイルURLに 'rules/' プレフィックスを追加
+  FILE_URL="$BASE_URL/rules/$rule_path"
   FILE_NAME=$(basename "$rule_path")
   DEST_PATH="$TARGET_DIR/$FILE_NAME"
 
-  echo "  - Downloading $FILE_NAME..."
+  echo "  - $FILE_NAME をダウンロード中..."
   curl -fsSL "$FILE_URL" -o "$DEST_PATH"
 
-done <<< "$RULE_LIST" # Here-string to pass the list to the loop
+done <<< "$RULE_LIST" # リストをループに渡すためのヒアストリング
 
-echo "Profile '$PROFILE' set up successfully in $TARGET_DIR/"
+echo "プロファイル '$PROFILE' が $TARGET_DIR/ に正常に設定されました。"
