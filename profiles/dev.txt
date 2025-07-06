@@ -1,4 +1,5 @@
 git/commit-message-rules.mdc
 git/git-workflow-rules.mdc
-github/github.mdc
+github/github-issue.mdc
+github/github-pr.mdc
 writing/markdown-style-guide.mdc
