@@ -15,15 +15,15 @@ if [ -z "$PROFILE" ]; then
   exit 1
 fi
 
-# .cursorディレクトリが存在しない場合は作成
-TARGET_DIR=".cursor"
+# .cursor/${PROFILE}ディレクトリが存在しない場合は作成
+TARGET_DIR=".cursor/${PROFILE}"
 mkdir -p "$TARGET_DIR"
 
 # 'clear'コマンドの処理
 if [ "$PROFILE" = "clear" ]; then
-  echo "$TARGET_DIR/ から既存のルールをクリアしています..."
-  # 他のユーザーファイルを削除しないように、.mdcファイルのみを削除
-  find "$TARGET_DIR" -maxdepth 1 -type f -name "*.mdc" -delete
+  echo ".cursor/ 以下の各プロファイルディレクトリから既存のルールをクリアしています..."
+  # .cursor/配下の全プロファイルディレクトリの.mdcファイルを削除
+  find .cursor/ -type f -name "*.mdc" -delete
   echo "すべてのルールがクリアされました。"
   exit 0
 fi
@@ -43,7 +43,7 @@ if [ -z "$RULE_LIST" ]; then
 fi
 
 # まず、クリーンな状態を確保するために既存のルールをクリア
-echo "既存のルールをクリアしています..."
+# 指定プロファイルディレクトリ配下のみクリア
 find "$TARGET_DIR" -maxdepth 1 -type f -name "*.mdc" -delete
 
 # プロファイルで指定された各ルールファイルをダウンロード
