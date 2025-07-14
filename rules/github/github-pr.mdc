@@ -6,6 +6,12 @@ alwaysApply: false
 
 # Pull Request作成ルール
 
+## タイトル
+
+Pull Requestのタイトルには `feat:` や `fix:` といったプレフィックスを付けないでください。
+
+## 本文
+
 以下のテンプレートに沿ってPRを作成してください。
 
 ---
